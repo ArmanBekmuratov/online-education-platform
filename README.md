@@ -1,23 +1,31 @@
-Образовательная Онлайн Платформа
-Описание
-Этот проект представляет собой образовательную онлайн платформу, предназначенную для обучения и развития навыков пользователей в различных областях. Платформа предоставляет широкий спектр курсов, уроков и материалов, доступных для изучения в любое удобное время.
+# Educational Online Platform
 
-Сущности в Системе
-User: Пользователи платформы, могут быть как студентами, так и преподавателями курсов, так и админами.
-Course: Курсы, предлагаемые на платформе, содержащие несколько уроков по конкретной теме.
-Lesson: Уроки, входящие в состав курса, представляют собой отдельные образовательные блоки.
-Progress: Прогресс пользователя по курсам и урокам, отслеживает завершенные разделы и оценки.
-Certificate: Сертификаты, выдаваемые пользователям по успешному завершению курсов.
-Действия в Системе
-Действия по добавлению:
-Зарегистрировать пользователя в системе: Создание новых учетных записей для доступа к курсам и управлению ими.
-Добавить курс: Создание нового курса, включая его описание, структуру и уроки.
-Добавить урок в курс: Разработка и добавление нового урока в существующий курс.
-Отметить прогресс пользователя: Фиксация завершения уроков и курсов пользователями, обновление их прогресса.
-Выдать сертификат: Генерация и выдача сертификата пользователю по завершению курса.
-Действия по просмотру:
-Просмотреть список всех курсов: Получение списка доступных курсов на платформе.
-Просмотреть детали курса: Изучение структуры курса, его содержания и уроков.
-Просмотреть прогресс по курсу: Отслеживание прогресса пользователя по конкретному курсу.
-Просмотреть сертификаты пользователя: Просмотр выданных сертификатов по завершенным курсам.
-Просмотреть историю обучения пользователя: Изучение всех курсов и уроков, пройденных пользователем.
+## Description
+
+This project is an educational platform designed to provide high-quality educational courses to users around the world. The platform allows users to learn new skills, deepen their knowledge in various fields, and earn certificates upon course completion.
+
+## Entities
+
+- **User**: System users, who can be either students or instructors.
+- **Course**: Courses available for study on the platform.
+- **Lesson**: Individual lessons that make up a course.
+- **Progress**: Information about a user's progress through courses.
+- **Certificate**: Certificates awarded to users upon course completion.
+
+## Functionality
+
+### Adding
+
+1. **User Registration**: Creating an account to access courses.
+2. **Creating a Course**: Adding a new course with its content.
+3. **Adding a Lesson**: Developing lessons for courses.
+4. **Marking Progress**: Recording user achievements in studying materials.
+5. **Issuing Certificates**: Awarding certificates to users upon course completion.
+
+### Viewing
+
+1. **Course List**: Viewing the available courses on the platform.
+2. **Course Details**: Information about the content and structure of a course.
+3. **User Progress**: Tracking individual progress in studying courses.
+4. **Viewing Certificates**: Access to earned certificates.
+5. **Learning History**: Viewing the courses and lessons a user has completed.
