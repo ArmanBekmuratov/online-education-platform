@@ -1,0 +1,4 @@
+rootProject.name = 'online-education-platform'
+include 'service'
+include 'common'
+
