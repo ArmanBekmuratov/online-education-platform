@@ -1,6 +1,5 @@
 package com.ab.eduplatform.entity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -13,31 +12,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.time.LocalDate;
 
 @Entity
-@Table(name = "certificate")
+@Table(name = "lesson_completions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Certificate {
+public class LessonCompletion {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "progress_id" )
+    private Progress progress;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
-
-    @Column(name = "issue_date")
-    private LocalDate issueDate;
-    private Integer grade;
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 }

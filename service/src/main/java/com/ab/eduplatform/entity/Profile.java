@@ -7,7 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,29 +16,30 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.time.LocalDate;
-
 @Entity
-@Table(name = "certificate")
+@Table(name = "profile")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Certificate {
+public class Profile {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
-    @Column(name = "issue_date")
-    private LocalDate issueDate;
-    private Integer grade;
+    private String language;
+    private String bio;
+
+    public void setUser(User user) {
+        user.setProfile(this);
+        this.user = user;
+    }
 }
