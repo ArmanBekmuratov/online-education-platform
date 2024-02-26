@@ -5,6 +5,17 @@ plugins {
 group = 'com.ab'
 version = '1.0-SNAPSHOT'
 
+ext {
+    hibernateVersion = '6.4.3.Final'
+    postgresqlVersion = '42.6.0'
+    lombokVersion = '1.18.30'
+    querydslVersion = '5.0.0'
+    jakartaPersistenceApiVersion = '3.1.0'
+    assertjCoreVersion = '3.21.0'
+    testcontainersVersion = '1.19.5'
+    junitVersion = '5.9.1'
+}
+
 repositories {
     mavenCentral()
 }

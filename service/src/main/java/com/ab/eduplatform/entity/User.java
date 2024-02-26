@@ -8,6 +8,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -22,7 +25,19 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@NamedEntityGraph(
+        name = "withProfileAndCoursesTaughtAndProgressAndCertificate",
+        attributeNodes = {
+                @NamedAttributeNode("profile"),
+                @NamedAttributeNode(value = "coursesTaught"),
+                @NamedAttributeNode(value = "progress", subgraph = "progressSubgraph"),
+                @NamedAttributeNode(value = "certificates")
+        },
+        subgraphs = @NamedSubgraph(
+                name = "progressSubgraph",
+                attributeNodes = @NamedAttributeNode("grade")
+        )
+)
 @Entity
 @Table(name = "users")
 @Data
@@ -53,8 +68,8 @@ public class User {
     )
     private Profile profile;
 
-    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     @Builder.Default
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     private List<Course> coursesTaught = new ArrayList<>();
 
     @Builder.Default

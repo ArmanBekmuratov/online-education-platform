@@ -3,7 +3,9 @@ package com.ab.eduplatform.entity;
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,13 +17,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserIT {
 
-    private Session session;
+    private static Session session;
     private Transaction transaction;
 
-    @BeforeEach
-    void openSession() {
+    @BeforeAll
+    static void openSession() {
         session = HibernateTestUtil.buildSessionFactory().openSession();
+    }
+
+    @BeforeEach
+    void openTransaction() {
         transaction = session.beginTransaction();
+    }
+
+    @AfterEach
+    void closeTransaction() {
+        if (transaction != null) {
+            transaction.commit();
+        }
+    }
+
+    @AfterAll
+    static void closeSession() {
+        if (session != null) {
+            session.close();
+        }
     }
 
     @Test
@@ -143,17 +163,6 @@ class UserIT {
         assertThat(retrievedCourseJava).isNotNull();
         assertThat(retrievedCourseJava.getName()).isEqualTo("java");
         assertThat(retrievedCoursePython.getName()).isEqualTo("python");
-    }
-
-    @AfterEach
-    void closeSession() {
-        if (transaction != null) {
-            transaction.commit();
-        }
-
-        if (session != null) {
-            session.close();
-        }
     }
 
     private User getUser() {

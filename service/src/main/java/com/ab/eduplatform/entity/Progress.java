@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "progress")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,5 +44,6 @@ public class Progress {
     private Integer grade;
 
     @OneToMany(mappedBy = "progress", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<LessonCompletion> lessonCompletions = new ArrayList<>();
 }

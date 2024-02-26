@@ -23,7 +23,6 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "course")
 @Data
 @ToString(exclude = {"teacher", "lessons", "progresses", "certificates"})
 @AllArgsConstructor
@@ -52,12 +51,15 @@ public class Course {
 
     private String image;
 
+    @Builder.Default
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Lesson> lessons = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Progress> progresses = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     private List<Certificate> certificates = new ArrayList<>();
 }

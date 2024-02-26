@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "lesson")
 @Data
 @ToString(exclude = {"course", "lessonCompletions"})
 @AllArgsConstructor
@@ -48,6 +47,7 @@ public class Lesson {
     @Column(name = "order_number")
     private Integer orderNumber;
 
+    @Builder.Default
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LessonCompletion> lessonCompletions = new ArrayList<>();
 }
