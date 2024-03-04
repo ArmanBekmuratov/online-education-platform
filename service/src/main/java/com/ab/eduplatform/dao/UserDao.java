@@ -27,15 +27,6 @@ public class UserDao {
 
     private static final UserDao INSTANCE = new UserDao();
 
-    /**
-     *  Return all users
-     */
-    public List<User> findAll(Session session) {
-        return new JPAQuery<User>(session)
-                .select(user)
-                .from(user)
-                .fetch();
-    }
 
     /**
      *  Return all users but with CriteriaAPI
@@ -109,13 +100,11 @@ public class UserDao {
         Root<Progress> progress = criteria.from(Progress.class);
         Join<Progress, User> user = progress.join("user");
 
-        if (filter.getFirstname() != null) {
-            criteria.where(cb.equal(user.get("firstname"), filter.getFirstname()));
-        }
-        if (filter.getLastname() != null) {
-            criteria.where(cb.equal(user.get("lastname"), filter.getLastname()));
-        }
+        CriteriaPredicate criteriaPredicate = CriteriaPredicate.builder(cb)
+                        .add(filter.getFirstname(), name -> cb.equal(user.get("firstname"), name))
+                        .add(filter.getLastname(), name -> cb.equal(user.get("lastname"), name));
 
+        criteria.where(criteriaPredicate.buildAnd());
         criteria.select(cb.avg(progress.get("grade")));
 
         return session.createQuery(criteria).getSingleResult();

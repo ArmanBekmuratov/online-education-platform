@@ -2,8 +2,10 @@ package com.ab.eduplatform.dao;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.NumberPath;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -22,6 +24,13 @@ public class QPredicate {
         return this;
     }
 
+    public <T> QPredicate addCollection(Collection<T> collection, Function<Collection<T>, Predicate> function) {
+        if (collection != null && !collection.isEmpty()) {
+            predicates.add(function.apply(collection));
+        }
+        return this;
+    }
+
     public Predicate buildAnd() {
         return ExpressionUtils.allOf(predicates);
     }
@@ -29,4 +38,5 @@ public class QPredicate {
     public Predicate buildOr() {
         return ExpressionUtils.anyOf(predicates);
     }
+
 }

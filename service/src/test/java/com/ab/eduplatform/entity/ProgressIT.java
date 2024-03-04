@@ -2,7 +2,7 @@ package com.ab.eduplatform.entity;
 
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,82 +14,34 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProgressIT {
+ class ProgressIT {
 
+    private static SessionFactory sessionFactory;
     private static Session session;
-    private Transaction transaction;
 
     @BeforeAll
-    static void openSession() {
-        session = HibernateTestUtil.buildSessionFactory().openSession();
+    static void openSessionFactory() {
+        sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
     @BeforeEach
-    void openTransaction() {
-        transaction = session.beginTransaction();
+    void openSessionAndTransaction() {
+        session = sessionFactory.openSession();
+        session.beginTransaction();
     }
 
     @AfterEach
-    void closeTransaction() {
-        if (transaction != null) {
-            transaction.commit();
+    void closeSessionAndTransaction() {
+        if (session.getTransaction() != null) {
+            session.getTransaction().commit();
         }
     }
 
     @AfterAll
-    static void closeSession() {
-        if (session != null) {
-            session.close();
+    static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
         }
-    }
-
-    @Test
-    void shouldCreateProgress() {
-        Progress progress = getProgress();
-
-        session.persist(progress);
-
-        assertThat(progress.getId()).isNotNull();
-    }
-
-    @Test
-    void shouldGetProgress() {
-        Progress progress = getProgress();
-        session.persist(progress);
-
-        Progress retrievedProgress = session.get(Progress.class, progress.getId());
-
-        assertThat(retrievedProgress).isNotNull();
-        assertThat(retrievedProgress.getGrade()).isEqualTo(100);
-        assertThat(retrievedProgress.getCompletedLessons()).isEqualTo("25");
-    }
-
-    @Test
-    void shouldUpdateProgress() {
-        Progress progress = getProgress();
-        session.persist(progress);
-        progress.setGrade(0);
-        progress.setCompletedLessons("updated number");
-
-        session.merge(progress);
-        Progress updatedProgress = session.get(Progress.class, progress.getId());
-
-        assertThat(updatedProgress).isNotNull();
-        assertThat(updatedProgress.getGrade()).isEqualTo(0);
-        assertThat(updatedProgress.getCompletedLessons()).isEqualTo("updated number");
-    }
-
-    @Test
-    void shouldDeleteProgress() {
-        Long progressId;
-        Progress progress = getProgress();
-        session.persist(progress);
-        progressId = progress.getId();
-
-        session.remove(progress);
-        Progress deletedProgress = session.get(Progress.class, progressId);
-
-        assertThat(deletedProgress).isNull();
     }
 
     @Test
@@ -128,12 +80,5 @@ public class ProgressIT {
         assertThat(progress.getCourse()).isEqualTo(course);
         assertThat(progress.getCompletedLessons()).isEqualTo("1,2,3");
         assertThat(progress.getGrade()).isEqualTo(100);
-    }
-
-    private Progress getProgress() {
-        return Progress.builder()
-                .completedLessons("25")
-                .grade(100)
-                .build();
     }
 }

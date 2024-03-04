@@ -1,12 +1,17 @@
 package com.ab.eduplatform.dao;
 
+import com.ab.eduplatform.dao.repository.CertificateRepository;
 import com.ab.eduplatform.dto.ProgressFilter;
+import com.ab.eduplatform.entity.Certificate;
+import com.ab.eduplatform.entity.Course;
+import com.ab.eduplatform.entity.Level;
+import com.ab.eduplatform.entity.Profile;
 import com.ab.eduplatform.entity.Progress;
 import com.ab.eduplatform.entity.Role;
 import com.ab.eduplatform.entity.User;
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
 import org.hibernate.graph.GraphSemantic;
 import org.hibernate.graph.RootGraph;
 import org.junit.jupiter.api.AfterAll;
@@ -16,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,48 +31,35 @@ import static org.assertj.core.api.Assertions.within;
 
 class UserDaoIT {
 
+    private static SessionFactory sessionFactory;
     private static Session session;
-    private Transaction transaction;
-    private final UserDao userDao = UserDao.getInstance();
+    private UserDao userDao;
 
     @BeforeAll
-    static void openSession() {
-        session = HibernateTestUtil.buildSessionFactory().openSession();
+    static void openSessionFactory() {
+        sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
     @BeforeEach
-    void openTransaction() {
-        transaction = session.beginTransaction();
+    void openSessionAndTransaction() {
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+        userDao = UserDao.getInstance();
     }
 
     @AfterEach
-    void closeTransaction() {
-        if (transaction != null) {
-            transaction.commit();
+    void closeSessionAndTransaction() {
+        if (session.getTransaction().isActive()) {
+            session.getTransaction().rollback();
         }
+        session.close();
     }
 
     @AfterAll
-    static void closeSession() {
-        if (session != null) {
-            session.close();
+    static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
         }
-    }
-
-    @Test
-    void findAll() {
-        User user1 = getUser();
-        User user2 = getUser();
-        user2.setEmail("test2@gmail.com");
-        session.persist(user1);
-        session.persist(user2);
-        session.flush();
-
-        List<User> users = userDao.findAll(session);
-
-        assertThat(users).isNotNull();
-        assertThat(users).hasSize(2);
-        assertThat(users).containsAll(Arrays.asList(user1, user2));
     }
 
     @Test
@@ -80,7 +73,6 @@ class UserDaoIT {
 
         List<User> users = userDao.findAllWithCriteriaApi(session);
 
-        assertThat(users).isNotNull();
         assertThat(users).hasSize(2);
         assertThat(users).containsAll(Arrays.asList(user1, user2));
     }
@@ -107,7 +99,7 @@ class UserDaoIT {
         assertThat(users).contains(user2);
     }
 
-        @Test
+    @Test
     void checkEntityGraph() {
         String targetFirstName = "Test";
         User user = getUser();
@@ -119,7 +111,7 @@ class UserDaoIT {
         session.flush();
 
         RootGraph<?> entityGraph = session.getEntityGraph("withProfileAndCoursesTaughtAndProgressAndCertificate");
-        session.setProperty(GraphSemantic.LOAD.getJakartaHintName(), entityGraph);
+        session.setProperty(GraphSemantic.FETCH.getJakartaHintName(), entityGraph);
 
         userDao.findAllByFirstName(session, targetFirstName);
      }
@@ -218,6 +210,7 @@ class UserDaoIT {
                 .registrationDate(Instant.now())
                 .build();
     }
+
     private Progress getProgress() {
         return Progress.builder()
                 .completedLessons("25")

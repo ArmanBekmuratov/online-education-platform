@@ -28,7 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Course {
+public class Course implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)

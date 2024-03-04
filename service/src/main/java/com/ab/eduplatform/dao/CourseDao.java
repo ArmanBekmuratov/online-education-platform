@@ -12,16 +12,13 @@ import org.hibernate.Session;
 import java.util.List;
 
 import static com.ab.eduplatform.entity.QCourse.course;
-import static com.ab.eduplatform.entity.QUser.*;
+import static com.ab.eduplatform.entity.QUser.user;
 
 @NoArgsConstructor(access =  AccessLevel.PRIVATE)
 public class CourseDao {
 
     private static final CourseDao INSTANCE = new CourseDao();
 
-    /**
-     * Search courses by category and level
-     */
     public List<Course> findCoursesByCategoryAndLevel(Session session, CategoryFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getCategory(), course.category::eq)
@@ -35,7 +32,7 @@ public class CourseDao {
                 .fetch();
     }
 
-    public List<Course> findCoursesByTeacherName(Session session, String teacherName) {;
+    public List<Course> findCoursesByTeacherName(Session session, String teacherName) {
         return new JPAQuery<Course>(session)
                 .select(course)
                 .from(course)
@@ -45,6 +42,13 @@ public class CourseDao {
                 .fetch();
     }
 
+    public List<Course> findCoursesByPriceRange(Session session, double minPrice, double maxPrice) {
+        return new JPAQuery<Course>(session)
+                .select(course)
+                .from(course)
+                .where(course.price.between(minPrice, maxPrice))
+                .fetch();
+    }
 
     public static CourseDao getInstance() {
         return INSTANCE;

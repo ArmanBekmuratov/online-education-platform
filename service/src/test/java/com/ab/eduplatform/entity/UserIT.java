@@ -2,7 +2,7 @@ package com.ab.eduplatform.entity;
 
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,84 +17,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class UserIT {
 
+    private static SessionFactory sessionFactory;
     private static Session session;
-    private Transaction transaction;
 
     @BeforeAll
-    static void openSession() {
-        session = HibernateTestUtil.buildSessionFactory().openSession();
+    static void openSessionFactory() {
+        sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
     @BeforeEach
-    void openTransaction() {
-        transaction = session.beginTransaction();
+    void openSessionAndTransaction() {
+        session = sessionFactory.openSession();
+        session.beginTransaction();
     }
 
     @AfterEach
-    void closeTransaction() {
-        if (transaction != null) {
-            transaction.commit();
+    void closeSessionAndTransaction() {
+        if (session.getTransaction() != null) {
+            session.getTransaction().commit();
         }
     }
 
     @AfterAll
-    static void closeSession() {
-        if (session != null) {
-            session.close();
+    static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
         }
-    }
-
-    @Test
-    void shouldCreateUser() {
-        User user = getUser();
-
-        session.persist(user);
-
-        assertThat(user.getId()).isNotNull();
-        assertThat(user.getFirstname()).isEqualTo("John");
-        assertThat(user.getRole()).isEqualTo(Role.STUDENT);
-    }
-
-    @Test
-    void shouldGetUser() {
-        User user = getUser();
-        session.persist(user);
-
-        User retrievedUser = session.get(User.class, user.getId());
-
-        assertThat(retrievedUser).isNotNull();
-        assertThat(retrievedUser.getFirstname()).isEqualTo("John");
-        assertThat(retrievedUser.getRole()).isEqualTo(Role.STUDENT);
-    }
-
-    @Test
-    void shouldUpdateUser() {
-        User user = getUser();
-        session.persist(user);
-        user.setFirstname("updated firstname");
-        user.setLastname("updated lastname");
-        user.setRole(Role.TEACHER);
-
-        session.merge(user);
-        User updatedUser = session.get(User.class, user.getId());
-
-        assertThat(updatedUser).isNotNull();
-        assertThat(updatedUser.getFirstname()).isEqualTo("updated firstname");
-        assertThat(updatedUser.getLastname()).isEqualTo("updated lastname");
-        assertThat(updatedUser.getRole()).isEqualTo(Role.TEACHER);
-    }
-
-    @Test
-    void shouldDeleteUser() {
-        Long userId;
-        User user = getUser();
-        session.persist(user);
-        userId = user.getId();
-
-        session.remove(user);
-        User deletedUser = session.get(User.class, userId);
-
-        assertThat(deletedUser).isNull();
     }
 
     @Test

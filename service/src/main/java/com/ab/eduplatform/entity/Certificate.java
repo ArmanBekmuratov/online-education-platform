@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Certificate {
+public class Certificate implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)

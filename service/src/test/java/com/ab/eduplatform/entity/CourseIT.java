@@ -2,6 +2,7 @@ package com.ab.eduplatform.entity;
 
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -16,90 +17,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CourseIT {
 
+    private static SessionFactory sessionFactory;
     private static Session session;
-    private Transaction transaction;
 
     @BeforeAll
-    static void openSession() {
-        session = HibernateTestUtil.buildSessionFactory().openSession();
+    static void openSessionFactory() {
+        sessionFactory = HibernateTestUtil.buildSessionFactory();
     }
 
     @BeforeEach
-    void openTransaction() {
-        transaction = session.beginTransaction();
+    void openSessionAndTransaction() {
+        session = sessionFactory.openSession();
+        session.beginTransaction();
     }
 
     @AfterEach
-    void closeTransaction() {
-        if (transaction != null) {
-            transaction.commit();
+    void closeSessionAndTransaction() {
+        if (session.getTransaction() != null) {
+            session.getTransaction().commit();
         }
     }
 
     @AfterAll
-    static void closeSession() {
-        if (session != null) {
-            session.close();
+    static void closeSessionFactory() {
+        if (sessionFactory != null) {
+            sessionFactory.close();
         }
-    }
-
-    @Test
-    void shouldCreateCourse() {
-        Course course = getCourse();
-
-        session.persist(course);
-
-        assertThat(course.getId()).isNotNull();
-        Course savedCourse = session.get(Course.class, course.getId());
-        assertThat(savedCourse).isNotNull();
-        assertThat(savedCourse.getName()).isEqualTo("java");
-        assertThat(savedCourse.getDescription()).isEqualTo("just java");
-        assertThat(savedCourse.getPrice()).isEqualTo(12.99);
-        assertThat(savedCourse.getLevel()).isEqualTo(Level.INTERMEDIATE);
-        assertThat(savedCourse.getCategory()).isEqualTo("programming");
-        assertThat(savedCourse.getStartDate()).isEqualTo(LocalDate.now()    );
-        assertThat(savedCourse.getEndDate()).isEqualTo(LocalDate.now().plusMonths(1));
-        assertThat(savedCourse.getImage()).isEqualTo("java.jpg");
-    }
-
-    @Test
-    void shouldGetCourse() {
-        Course course = getCourse();
-        session.persist(course);
-
-        Course retrievedCourse = session.get(Course.class, course.getId());
-
-        assertThat(retrievedCourse).isNotNull();
-        assertThat(retrievedCourse.getName()).isEqualTo("java");
-        assertThat(retrievedCourse.getPrice()).isEqualTo(12.99);
-    }
-
-    @Test
-    void shouldUpdateCourse() {
-        Course course = getCourse();
-        session.persist(course);
-        course.setCategory("updated category");
-        course.setName("updated name");
-
-        session.merge(course);
-        Course updatedCourse = session.get(Course.class, course.getId());
-
-        assertThat(updatedCourse).isNotNull();
-        assertThat(updatedCourse.getCategory()).isEqualTo("updated category");
-        assertThat(updatedCourse.getName()).isEqualTo("updated name");
-    }
-
-    @Test
-    void shouldDeleteCourse() {
-        Long courseId;
-        Course course = getCourse();
-        session.persist(course);
-        courseId = course.getId();
-
-        session.remove(course);
-        Course deletedCourse = session.get(Course.class, courseId);
-
-        assertThat(deletedCourse).isNull();
     }
 
     @Test

@@ -29,7 +29,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Lesson {
+public class Lesson implements BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy =  GenerationType.IDENTITY)
