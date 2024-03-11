@@ -1,7 +1,7 @@
-package com.ab.eduplatform.dao.repository;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Progress;
-import com.ab.eduplatform.entity.User;
+import com.ab.eduplatform.repository.ProgressRepository;
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,39 +14,17 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ab.eduplatform.repository.RepositoryBaseIT.context;
+import static com.ab.eduplatform.repository.RepositoryBaseIT.entityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProgressRepositoryIT {
+class ProgressRepositoryIT extends RepositoryBaseIT {
 
-    private static SessionFactory sessionFactory;
-    private static Session session;
-    private ProgressRepository progressRepository;
+    private static ProgressRepository progressRepository;
 
     @BeforeAll
-    static void openSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-    }
-
-    @BeforeEach
-    void openSessionAndTransaction() {
-        session = sessionFactory.openSession();
-        session.beginTransaction();
-        progressRepository = new ProgressRepository(Progress.class, session);
-    }
-
-    @AfterEach
-    void closeSessionAndTransaction() {
-        if (session.getTransaction().isActive()) {
-            session.getTransaction().rollback();
-        }
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        if (sessionFactory != null) {
-            sessionFactory.close();
-        }
+    static void init() {
+        progressRepository = context.getBean("progressRepository", ProgressRepository.class);
     }
 
     @Test
@@ -90,8 +68,8 @@ class ProgressRepositoryIT {
         Progress progress = getProgress();
         progressRepository.save(progress);
 
-        progressRepository.delete(progress.getId());
-        session.evict(progress);
+        progressRepository.delete(progress);
+        entityManager.detach(progress);
 
         Optional<Progress> deletedProgress = progressRepository.findById(progress.getId());
         assertThat(deletedProgress).isEmpty();

@@ -1,25 +1,27 @@
-package com.ab.eduplatform.dao;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.dto.CategoryFilter;
 import com.ab.eduplatform.entity.Course;
 import com.ab.eduplatform.entity.Role;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.EntityManager;
 import org.hibernate.Session;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static com.ab.eduplatform.entity.QCourse.course;
 import static com.ab.eduplatform.entity.QUser.user;
 
-@NoArgsConstructor(access =  AccessLevel.PRIVATE)
-public class CourseDao {
+@Repository
+public class CourseRepository extends RepositoryBase<Long, Course>{
 
-    private static final CourseDao INSTANCE = new CourseDao();
+    public CourseRepository(EntityManager entityManager) {
+        super(Course.class, entityManager);
+    }
 
-    public List<Course> findCoursesByCategoryAndLevel(Session session, CategoryFilter filter) {
+    public List<Course> findCoursesByCategoryAndLevel(EntityManager session, CategoryFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getCategory(), course.category::eq)
                 .add(filter.getLevel(), course.level::eq)
@@ -32,7 +34,7 @@ public class CourseDao {
                 .fetch();
     }
 
-    public List<Course> findCoursesByTeacherName(Session session, String teacherName) {
+    public List<Course> findCoursesByTeacherName(EntityManager session, String teacherName) {
         return new JPAQuery<Course>(session)
                 .select(course)
                 .from(course)
@@ -42,15 +44,11 @@ public class CourseDao {
                 .fetch();
     }
 
-    public List<Course> findCoursesByPriceRange(Session session, double minPrice, double maxPrice) {
+    public List<Course> findCoursesByPriceRange(EntityManager session, double minPrice, double maxPrice) {
         return new JPAQuery<Course>(session)
                 .select(course)
                 .from(course)
                 .where(course.price.between(minPrice, maxPrice))
                 .fetch();
-    }
-
-    public static CourseDao getInstance() {
-        return INSTANCE;
     }
 }

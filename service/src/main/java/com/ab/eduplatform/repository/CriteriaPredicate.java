@@ -1,4 +1,4 @@
-package com.ab.eduplatform.dao;
+package com.ab.eduplatform.repository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
@@ -29,7 +29,7 @@ public class CriteriaPredicate {
         return this;
     }
 
-    public <T> CriteriaPredicate addCollection(Collection<T> collection, Function<Collection<T>, Predicate> function) {
+    public <T> CriteriaPredicate add(Collection<T> collection, Function<Collection<T>, Predicate> function) {
         if (collection!= null && !collection.isEmpty()) {
             predicates.add(function.apply(collection));
         }

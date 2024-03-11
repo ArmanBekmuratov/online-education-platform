@@ -2,6 +2,7 @@ package com.ab.eduplatform.util;
 
 import lombok.experimental.UtilityClass;
 import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import org.hibernate.cfg.Configuration;

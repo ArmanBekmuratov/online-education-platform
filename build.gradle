@@ -14,6 +14,7 @@ ext {
     assertjCoreVersion = '3.21.0'
     testcontainersVersion = '1.19.5'
     junitVersion = '5.9.1'
+    springVersion = '6.1.4'
 }
 
 repositories {

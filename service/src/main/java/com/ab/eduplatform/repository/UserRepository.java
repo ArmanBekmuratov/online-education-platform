@@ -1,4 +1,4 @@
-package com.ab.eduplatform.dao;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.dto.ProgressFilter;
 import com.ab.eduplatform.dto.RoleFilter;
@@ -6,47 +6,49 @@ import com.ab.eduplatform.entity.Progress;
 import com.ab.eduplatform.entity.User;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.hibernate.query.criteria.JpaCriteriaQuery;
 import org.hibernate.query.criteria.JpaRoot;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 import static com.ab.eduplatform.entity.QProgress.progress;
 import static com.ab.eduplatform.entity.QUser.user;
 
-@NoArgsConstructor(access =  AccessLevel.PRIVATE)
-public class UserDao {
+@Repository
+public class UserRepository extends RepositoryBase<Long, User> {
 
-    private static final UserDao INSTANCE = new UserDao();
-
+    public UserRepository(EntityManager entityManager) {
+        super(User.class, entityManager);
+    }
 
     /**
      *  Return all users but with CriteriaAPI
      */
-    public List<User> findAllWithCriteriaApi(Session session) {
-        HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
+    public List<User> findAllWithCriteriaApi(EntityManager session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
 
-        JpaCriteriaQuery<User> criteria = cb.createQuery(User.class);
-        JpaRoot<User> user = criteria.from(User.class);
+        CriteriaQuery<User> criteria = cb.createQuery(User.class);
+        Root<User> user = criteria.from(User.class);
 
         criteria.select(user);
 
         return session.createQuery(criteria)
-                .list();
+                .getResultList();
     }
 
     /**
      *  Return all users by their firstname
      */
-    public List<User> findAllByFirstName(Session session, String firstname) {
+    public List<User> findAllByFirstName(EntityManager session, String firstname) {
         return new JPAQuery<User>(session)
                 .select(user)
                 .from(user)
@@ -57,24 +59,24 @@ public class UserDao {
     /**
      *  Return all users by their firstname but with CriteriaAPI
      */
-    public List<User> findAllByFirstNameWithCriteriaApi(Session session, String firstname) {
-        HibernateCriteriaBuilder cb = session.getCriteriaBuilder();
+    public List<User> findAllByFirstNameWithCriteriaApi(EntityManager session, String firstname) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
 
-        JpaCriteriaQuery<User> criteria = cb.createQuery(User.class);
-        JpaRoot<User> user = criteria.from(User.class);
+        CriteriaQuery<User> criteria = cb.createQuery(User.class);
+        Root<User> user = criteria.from(User.class);
 
         criteria.select(user).where(
                 cb.equal(user.get("firstname"), firstname)
         );
 
         return session.createQuery(criteria)
-                .list();
+                .getResultList();
     }
 
     /**
      * Return average grade of user by firstname and lastname using ProgressFilter
      */
-    public Double findAverageProgressGradeByFirstAndLastNames(Session session, ProgressFilter filter) {
+    public Double findAverageProgressGradeByFirstAndLastNames(EntityManager session, ProgressFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getFirstname(), user.firstname::eq)
                 .add(filter.getLastname(), user.lastname::eq)
@@ -92,7 +94,7 @@ public class UserDao {
      * Return average grade of user by firstname and lastname using ProgressFilter
      * but with CriteriaAPI
      */
-    public Double findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(Session session, ProgressFilter filter) {
+    public Double findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(EntityManager session, ProgressFilter filter) {
         CriteriaBuilder cb = session.getCriteriaBuilder();
 
         CriteriaQuery<Double> criteria = cb.createQuery(Double.class);
@@ -101,8 +103,8 @@ public class UserDao {
         Join<Progress, User> user = progress.join("user");
 
         CriteriaPredicate criteriaPredicate = CriteriaPredicate.builder(cb)
-                        .add(filter.getFirstname(), name -> cb.equal(user.get("firstname"), name))
-                        .add(filter.getLastname(), name -> cb.equal(user.get("lastname"), name));
+                .add(filter.getFirstname(), name -> cb.equal(user.get("firstname"), name))
+                .add(filter.getLastname(), name -> cb.equal(user.get("lastname"), name));
 
         criteria.where(criteriaPredicate.buildAnd());
         criteria.select(cb.avg(progress.get("grade")));
@@ -113,7 +115,7 @@ public class UserDao {
     /**
      * Return users by their firstname, lastname, role and registration date
      */
-    public List<User> findUsersByNameAndRoleAndRegistrationDate(Session session, RoleFilter filter)  {
+    public List<User> findUsersByNameAndRoleAndRegistrationDate(EntityManager session, RoleFilter filter)  {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getFirstname(), user.firstname::eq)
                 .add(filter.getLastname(), user.lastname::eq)
@@ -126,9 +128,5 @@ public class UserDao {
                 .from(user)
                 .where(predicate)
                 .fetch();
-    }
-
-    public static UserDao getInstance() {
-        return INSTANCE;
     }
 }

@@ -1,9 +1,11 @@
-package com.ab.eduplatform.dao.repository;
+package com.ab.eduplatform.repository;
 
+import com.ab.eduplatform.dto.CategoryFilter;
 import com.ab.eduplatform.entity.Course;
-import com.ab.eduplatform.entity.Lesson;
 import com.ab.eduplatform.entity.Level;
+import com.ab.eduplatform.entity.Role;
 import com.ab.eduplatform.entity.User;
+import com.ab.eduplatform.repository.CourseRepository;
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -13,44 +15,20 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CourseRepositoryIT {
+class CourseRepositoryIT extends RepositoryBaseIT{
 
-    private static SessionFactory sessionFactory;
-    private static Session session;
-    private CourseRepository courseRepository;
+    private static CourseRepository courseRepository;
 
     @BeforeAll
-    static void openSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-    }
-
-    @BeforeEach
-    void openSessionAndTransaction() {
-        session = sessionFactory.openSession();
-        session.beginTransaction();
-        courseRepository = new CourseRepository(Course.class, session);
-    }
-
-    @AfterEach
-    void closeSessionAndTransaction() {
-        if (session.getTransaction().isActive()) {
-            session.getTransaction().rollback();
-        }
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        if (sessionFactory != null) {
-            sessionFactory.close();
-        }
+    static void init() {
+        courseRepository = context.getBean("courseRepository", CourseRepository.class);
     }
 
     @Test
@@ -94,8 +72,8 @@ class CourseRepositoryIT {
         Course course = getCourse();
         courseRepository.save(course);
 
-        courseRepository.delete(course.getId());
-        session.evict(course);
+        courseRepository.delete(course);
+        entityManager.detach(course);
 
         Optional<Course> deletedCourse = courseRepository.findById(course.getId());
         assertThat(deletedCourse).isEmpty();
@@ -114,6 +92,57 @@ class CourseRepositoryIT {
 
         assertThat(courses).hasSize(3);
     }
+
+    @Test
+    void findCoursesByCategoryAndLevel() {
+        CategoryFilter filter = CategoryFilter.builder()
+                .category("programming")
+                .level(Level.INTERMEDIATE)
+                .build();
+        Course expectedCourse = getCourse();
+        entityManager.persist(expectedCourse);
+
+        List<Course> courses = courseRepository.findCoursesByCategoryAndLevel(entityManager, filter);
+
+        assertThat(courses).isNotEmpty();
+        assertThat(courses.get(0).getName()).isEqualTo(expectedCourse.getName());
+    }
+
+    @Test
+    void findCoursesByTeacherName() {
+        User teacher = getUser();
+        entityManager.persist(teacher);
+        Course expectedCourse = getCourse();
+        expectedCourse.setTeacher(teacher);
+        entityManager.persist(expectedCourse);
+
+        List<Course> courses = courseRepository.findCoursesByTeacherName(entityManager, "John King");
+
+        assertThat(courses).hasSize(1);
+        assertThat(courses.get(0).getName()).isEqualTo(expectedCourse.getName());
+    }
+
+    @Test
+    void findCoursesByPriceRange() {
+        Course course = getCourse();
+        entityManager.persist(course);
+
+        List<Course> coursesByPriceRange = courseRepository.findCoursesByPriceRange(entityManager, 12.0, 13.0);
+
+        assertThat(coursesByPriceRange).hasSize(1);
+    }
+
+    private User getUser() {
+        return User.builder()
+                .firstname("John")
+                .lastname("King")
+                .email("johnking@gmail.com")
+                .password("123")
+                .role(Role.TEACHER)
+                .registrationDate(Instant.now())
+                .build();
+    }
+
 
     private Course getCourse() {
         return Course.builder()

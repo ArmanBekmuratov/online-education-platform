@@ -1,10 +1,7 @@
-package com.ab.eduplatform.dao.repository;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Certificate;
-import com.ab.eduplatform.entity.Course;
-import com.ab.eduplatform.entity.Level;
-import com.ab.eduplatform.entity.Role;
-import com.ab.eduplatform.entity.User;
+import com.ab.eduplatform.repository.CertificateRepository;
 import com.ab.eduplatform.util.HibernateTestUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,44 +11,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CertificateRepositoryIT {
+class CertificateRepositoryIT extends RepositoryBaseIT{
 
-    private static SessionFactory sessionFactory;
-    private static Session session;
-    private CertificateRepository certificateRepository;
+    private static CertificateRepository certificateRepository;
 
     @BeforeAll
-    static void openSessionFactory() {
-        sessionFactory = HibernateTestUtil.buildSessionFactory();
-    }
-
-    @BeforeEach
-    void openSessionAndTransaction() {
-        session = sessionFactory.openSession();
-        session.beginTransaction();
-        certificateRepository = new CertificateRepository(Certificate.class, session);
-    }
-
-    @AfterEach
-    void closeSessionAndTransaction() {
-        if (session.getTransaction().isActive()) {
-            session.getTransaction().rollback();
-        }
-        session.close();
-    }
-
-    @AfterAll
-    static void closeSessionFactory() {
-        if (sessionFactory != null) {
-            sessionFactory.close();
-        }
+     static void init() {
+        certificateRepository = context.getBean("certificateRepository", CertificateRepository.class);
     }
 
     @Test
@@ -92,8 +64,8 @@ class CertificateRepositoryIT {
         Certificate certificate = getCertificate();
         certificateRepository.save(certificate);
 
-        certificateRepository.delete(certificate.getId());
-        session.evict(certificate);
+        certificateRepository.delete(certificate);
+        entityManager.clear();
 
         Optional<Certificate> deletedCertificate = certificateRepository.findById(certificate.getId());
         assertThat(deletedCertificate).isEmpty();

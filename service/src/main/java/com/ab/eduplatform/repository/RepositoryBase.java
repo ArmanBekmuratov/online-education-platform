@@ -1,9 +1,9 @@
-package com.ab.eduplatform.dao.repository;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.BaseEntity;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaQuery;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,41 +13,40 @@ import java.util.Optional;
 public abstract class RepositoryBase <K extends Serializable, E extends BaseEntity<K>> implements Repository<K, E> {
 
     private final Class<E> clazz;
-    private final Session session;
+    private final EntityManager entityManager;
 
     @Override
     public E save(E entity) {
-        session.persist(entity);
+        entityManager.persist(entity);
 
         return entity;
     }
 
     @Override
-    public void delete(K id) {
-        E entity = session.find(clazz, id);
-
+    public void delete(E entity) {
         if (entity != null) {
-            session.remove(entity);
-            session.flush();
+            entityManager.remove(entity);
+            entityManager.flush();
         }
     }
 
     @Override
     public void update(E entity) {
-        session.merge(entity);
+        entityManager.merge(entity);
+        entityManager.flush();
     }
 
     @Override
     public Optional<E> findById(K id) {
-        return Optional.ofNullable(session.find(clazz, id));
+        return Optional.ofNullable(entityManager.find(clazz, id));
     }
 
     @Override
     public List<E> findAll() {
-        CriteriaQuery<E> criteria = session.getCriteriaBuilder().createQuery(clazz);
+        CriteriaQuery<E> criteria = entityManager.getCriteriaBuilder().createQuery(clazz);
 
         criteria.from(clazz);
-        return session.createQuery(criteria)
+        return entityManager.createQuery(criteria)
                 .getResultList();
     }
 }

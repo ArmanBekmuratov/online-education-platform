@@ -1,8 +1,7 @@
-package com.ab.eduplatform.dao;
+package com.ab.eduplatform.repository;
 
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.NumberPath;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,7 @@ public class QPredicate {
         return this;
     }
 
-    public <T> QPredicate addCollection(Collection<T> collection, Function<Collection<T>, Predicate> function) {
+    public <T> QPredicate add(Collection<T> collection, Function<Collection<T>, Predicate> function) {
         if (collection != null && !collection.isEmpty()) {
             predicates.add(function.apply(collection));
         }

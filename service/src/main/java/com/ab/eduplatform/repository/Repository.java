@@ -1,4 +1,4 @@
-package com.ab.eduplatform.dao.repository;
+package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.BaseEntity;
 
@@ -10,7 +10,7 @@ public interface Repository<K extends Serializable, E extends BaseEntity<K>> {
 
     E save(E entity);
 
-    void delete(K id);
+    void delete(E entity);
 
     void update(E entity);
 
