@@ -1,31 +1,18 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Lesson;
-import com.ab.eduplatform.repository.LessonRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.ab.eduplatform.repository.RepositoryBaseIT.context;
-import static com.ab.eduplatform.repository.RepositoryBaseIT.entityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LessonRepositoryIT extends RepositoryBaseIT {
+@RequiredArgsConstructor
+class LessonRepositoryIT extends IntegrationTestBase {
 
-    private static LessonRepository lessonRepository;
-
-    @BeforeAll
-    static void init() {
-        lessonRepository = context.getBean("lessonRepository", LessonRepository.class);
-    }
+    private final LessonRepository lessonRepository;
 
     @Test
     void shouldCreateLesson() {

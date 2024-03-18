@@ -21,21 +21,21 @@ public class CourseRepository extends RepositoryBase<Long, Course>{
         super(Course.class, entityManager);
     }
 
-    public List<Course> findCoursesByCategoryAndLevel(EntityManager session, CategoryFilter filter) {
+    public List<Course> findCoursesByCategoryAndLevel(CategoryFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getCategory(), course.category::eq)
                 .add(filter.getLevel(), course.level::eq)
                 .buildAnd();
 
-        return new JPAQuery<>(session)
+        return new JPAQuery<>(entityManager)
                 .select(course)
                 .from(course)
                 .where(predicate)
                 .fetch();
     }
 
-    public List<Course> findCoursesByTeacherName(EntityManager session, String teacherName) {
-        return new JPAQuery<Course>(session)
+    public List<Course> findCoursesByTeacherName(String teacherName) {
+        return new JPAQuery<Course>(entityManager)
                 .select(course)
                 .from(course)
                 .join(course.teacher, user)
@@ -44,8 +44,8 @@ public class CourseRepository extends RepositoryBase<Long, Course>{
                 .fetch();
     }
 
-    public List<Course> findCoursesByPriceRange(EntityManager session, double minPrice, double maxPrice) {
-        return new JPAQuery<Course>(session)
+    public List<Course> findCoursesByPriceRange(double minPrice, double maxPrice) {
+        return new JPAQuery<Course>(entityManager)
                 .select(course)
                 .from(course)
                 .where(course.price.between(minPrice, maxPrice))

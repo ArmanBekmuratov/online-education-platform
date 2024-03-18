@@ -12,8 +12,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public abstract class RepositoryBase <K extends Serializable, E extends BaseEntity<K>> implements Repository<K, E> {
 
-    private final Class<E> clazz;
-    private final EntityManager entityManager;
+    protected final Class<E> clazz;
+    protected final EntityManager entityManager;
 
     @Override
     public E save(E entity) {

@@ -1,31 +1,18 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Progress;
-import com.ab.eduplatform.repository.ProgressRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.ab.eduplatform.repository.RepositoryBaseIT.context;
-import static com.ab.eduplatform.repository.RepositoryBaseIT.entityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProgressRepositoryIT extends RepositoryBaseIT {
+@RequiredArgsConstructor
+class ProgressRepositoryIT extends IntegrationTestBase {
 
-    private static ProgressRepository progressRepository;
-
-    @BeforeAll
-    static void init() {
-        progressRepository = context.getBean("progressRepository", ProgressRepository.class);
-    }
+    private final ProgressRepository progressRepository;
 
     @Test
     void shouldCreateProgress() {

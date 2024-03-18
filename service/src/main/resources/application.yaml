@@ -1,0 +1,19 @@
+spring:
+    datasource:
+        username: postgres
+        password: 2105
+        url: jdbc:postgresql://localhost:5432/postgres
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        properties.hibernate:
+                show_sql: true
+                format_sql: true
+                current_session_context_class: thread
+                hbm2ddl.auto: validate
+                naming.physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+logging:
+    level:
+        root: INFO
+    file:
+        name: ab.log
+        path: /

@@ -5,14 +5,7 @@ import com.ab.eduplatform.entity.Course;
 import com.ab.eduplatform.entity.Level;
 import com.ab.eduplatform.entity.Role;
 import com.ab.eduplatform.entity.User;
-import com.ab.eduplatform.repository.CourseRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -22,14 +15,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CourseRepositoryIT extends RepositoryBaseIT{
+@RequiredArgsConstructor
+class CourseRepositoryIT extends IntegrationTestBase {
 
-    private static CourseRepository courseRepository;
-
-    @BeforeAll
-    static void init() {
-        courseRepository = context.getBean("courseRepository", CourseRepository.class);
-    }
+    private final CourseRepository courseRepository;
 
     @Test
     void shouldCreateCourse() {
@@ -102,7 +91,7 @@ class CourseRepositoryIT extends RepositoryBaseIT{
         Course expectedCourse = getCourse();
         entityManager.persist(expectedCourse);
 
-        List<Course> courses = courseRepository.findCoursesByCategoryAndLevel(entityManager, filter);
+        List<Course> courses = courseRepository.findCoursesByCategoryAndLevel(filter);
 
         assertThat(courses).isNotEmpty();
         assertThat(courses.get(0).getName()).isEqualTo(expectedCourse.getName());
@@ -116,7 +105,7 @@ class CourseRepositoryIT extends RepositoryBaseIT{
         expectedCourse.setTeacher(teacher);
         entityManager.persist(expectedCourse);
 
-        List<Course> courses = courseRepository.findCoursesByTeacherName(entityManager, "John King");
+        List<Course> courses = courseRepository.findCoursesByTeacherName("John King");
 
         assertThat(courses).hasSize(1);
         assertThat(courses.get(0).getName()).isEqualTo(expectedCourse.getName());
@@ -127,7 +116,7 @@ class CourseRepositoryIT extends RepositoryBaseIT{
         Course course = getCourse();
         entityManager.persist(course);
 
-        List<Course> coursesByPriceRange = courseRepository.findCoursesByPriceRange(entityManager, 12.0, 13.0);
+        List<Course> coursesByPriceRange = courseRepository.findCoursesByPriceRange(12.0, 13.0);
 
         assertThat(coursesByPriceRange).hasSize(1);
     }

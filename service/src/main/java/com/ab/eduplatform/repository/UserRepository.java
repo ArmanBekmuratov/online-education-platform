@@ -33,23 +33,23 @@ public class UserRepository extends RepositoryBase<Long, User> {
     /**
      *  Return all users but with CriteriaAPI
      */
-    public List<User> findAllWithCriteriaApi(EntityManager session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
+    public List<User> findAllWithCriteriaApi() {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
 
         criteria.select(user);
 
-        return session.createQuery(criteria)
+        return entityManager.createQuery(criteria)
                 .getResultList();
     }
 
     /**
      *  Return all users by their firstname
      */
-    public List<User> findAllByFirstName(EntityManager session, String firstname) {
-        return new JPAQuery<User>(session)
+    public List<User> findAllByFirstName( String firstname) {
+        return new JPAQuery<User>(entityManager)
                 .select(user)
                 .from(user)
                 .where(user.firstname.eq(firstname))
@@ -59,8 +59,8 @@ public class UserRepository extends RepositoryBase<Long, User> {
     /**
      *  Return all users by their firstname but with CriteriaAPI
      */
-    public List<User> findAllByFirstNameWithCriteriaApi(EntityManager session, String firstname) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
+    public List<User> findAllByFirstNameWithCriteriaApi(String firstname) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<User> criteria = cb.createQuery(User.class);
         Root<User> user = criteria.from(User.class);
@@ -69,20 +69,20 @@ public class UserRepository extends RepositoryBase<Long, User> {
                 cb.equal(user.get("firstname"), firstname)
         );
 
-        return session.createQuery(criteria)
+        return entityManager.createQuery(criteria)
                 .getResultList();
     }
 
     /**
      * Return average grade of user by firstname and lastname using ProgressFilter
      */
-    public Double findAverageProgressGradeByFirstAndLastNames(EntityManager session, ProgressFilter filter) {
+    public Double findAverageProgressGradeByFirstAndLastNames(ProgressFilter filter) {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getFirstname(), user.firstname::eq)
                 .add(filter.getLastname(), user.lastname::eq)
                 .buildAnd();
 
-        return new JPAQuery<Double>(session)
+        return new JPAQuery<Double>(entityManager)
                 .select(progress.grade.avg())
                 .from(progress)
                 .join(progress.user, user)
@@ -94,8 +94,8 @@ public class UserRepository extends RepositoryBase<Long, User> {
      * Return average grade of user by firstname and lastname using ProgressFilter
      * but with CriteriaAPI
      */
-    public Double findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(EntityManager session, ProgressFilter filter) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
+    public Double findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(ProgressFilter filter) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
         CriteriaQuery<Double> criteria = cb.createQuery(Double.class);
 
@@ -109,13 +109,13 @@ public class UserRepository extends RepositoryBase<Long, User> {
         criteria.where(criteriaPredicate.buildAnd());
         criteria.select(cb.avg(progress.get("grade")));
 
-        return session.createQuery(criteria).getSingleResult();
+        return entityManager.createQuery(criteria).getSingleResult();
     }
 
     /**
      * Return users by their firstname, lastname, role and registration date
      */
-    public List<User> findUsersByNameAndRoleAndRegistrationDate(EntityManager session, RoleFilter filter)  {
+    public List<User> findUsersByNameAndRoleAndRegistrationDate(RoleFilter filter)  {
         Predicate predicate = QPredicate.builder()
                 .add(filter.getFirstname(), user.firstname::eq)
                 .add(filter.getLastname(), user.lastname::eq)
@@ -123,7 +123,7 @@ public class UserRepository extends RepositoryBase<Long, User> {
                 .add(filter.getRegistrationDate(), user.registrationDate::after)
                 .buildAnd();
 
-        return new JPAQuery<>(session)
+        return new JPAQuery<>(entityManager)
                 .select(user)
                 .from(user)
                 .where(predicate)

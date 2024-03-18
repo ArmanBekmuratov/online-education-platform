@@ -1,14 +1,7 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Certificate;
-import com.ab.eduplatform.repository.CertificateRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -17,14 +10,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CertificateRepositoryIT extends RepositoryBaseIT{
+@RequiredArgsConstructor
+class CertificateRepositoryIT extends IntegrationTestBase{
 
-    private static CertificateRepository certificateRepository;
-
-    @BeforeAll
-     static void init() {
-        certificateRepository = context.getBean("certificateRepository", CertificateRepository.class);
-    }
+    private final CertificateRepository certificateRepository;
 
     @Test
     void shouldCreateCertificate() {

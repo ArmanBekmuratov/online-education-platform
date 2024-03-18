@@ -1,6 +1,6 @@
 CREATE TABLE users
 (
-    id SERIAL PRIMARY KEY ,
+    id BIGINT PRIMARY KEY ,
     firstname VARCHAR (128) NOT NULL,
     lastname VARCHAR(128) NOT NULL,
     email VARCHAR(128) NOT NULL UNIQUE,
@@ -11,7 +11,7 @@ CREATE TABLE users
 
 CREATE TABLE profile
 (
-     id SERIAL PRIMARY KEY ,
+     id BIGINT PRIMARY KEY ,
      user_id INTEGER  UNIQUE NOT NULL REFERENCES users (id) ON DELETE CASCADE,
      phone_number VARCHAR(20),
      language VARCHAR(2),
@@ -20,7 +20,7 @@ CREATE TABLE profile
 
 CREATE TABLE course
 (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     name VARCHAR(256) NOT NULL ,
     description VARCHAR(256) NOT NULL ,
     price NUMERIC(10,2) NOT NULL ,
@@ -34,7 +34,7 @@ CREATE TABLE course
 
 CREATE TABLE lesson
 (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     video VARCHAR(255) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE lesson
 
 CREATE TABLE progress
 (
-    id SERIAL PRIMARY KEY ,
+    id BIGINT PRIMARY KEY ,
     user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     course_id INTEGER REFERENCES course (id),
     completed_lessons VARCHAR(256) NOT NULL ,
@@ -54,7 +54,7 @@ CREATE TABLE progress
 );
 
 CREATE TABLE lesson_completions (
-  id SERIAL PRIMARY KEY,
+  id BIGINT PRIMARY KEY,
   progress_id INTEGER REFERENCES progress(id) ON DELETE CASCADE,
   lesson_id INTEGER REFERENCES lesson(id) ON DELETE CASCADE
 );
@@ -62,11 +62,12 @@ CREATE TABLE lesson_completions (
 
 CREATE TABLE certificate
 (
-    id SERIAL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
     course_id INTEGER REFERENCES course (id),
     issue_date DATE NOT NULL,
     grade INTEGER NOT NULL CHECK (grade >= 0 AND grade <= 100)
 );
+
 
 

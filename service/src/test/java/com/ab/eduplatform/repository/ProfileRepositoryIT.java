@@ -1,31 +1,18 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Profile;
-import com.ab.eduplatform.repository.ProfileRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.ab.eduplatform.repository.RepositoryBaseIT.context;
-import static com.ab.eduplatform.repository.RepositoryBaseIT.entityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProfileRepositoryIT extends RepositoryBaseIT{
+@RequiredArgsConstructor
+class ProfileRepositoryIT extends IntegrationTestBase{
 
-    private static ProfileRepository profileRepository;
-
-    @BeforeAll
-    static void init() {
-        profileRepository = context.getBean("profileRepository", ProfileRepository.class);
-    }
+    private final ProfileRepository profileRepository;
 
     @Test
     void shouldCreateProfile() {

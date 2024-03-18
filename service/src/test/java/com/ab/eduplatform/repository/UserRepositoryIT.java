@@ -1,23 +1,13 @@
 package com.ab.eduplatform.repository;
 
-import com.ab.eduplatform.config.ApplicationConfigurationTest;
 import com.ab.eduplatform.dto.ProgressFilter;
 import com.ab.eduplatform.entity.Progress;
 import com.ab.eduplatform.entity.Role;
 import com.ab.eduplatform.entity.User;
-import com.ab.eduplatform.repository.UserRepository;
-import com.ab.eduplatform.util.HibernateTestUtil;
 import jakarta.persistence.EntityGraph;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.graph.GraphSemantic;
-import org.hibernate.graph.RootGraph;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -25,18 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.useDefaultDateFormatsOnly;
 import static org.assertj.core.api.Assertions.within;
 
-class UserRepositoryIT extends RepositoryBaseIT {
+@RequiredArgsConstructor
+class UserRepositoryIT extends IntegrationTestBase {
 
-    private static UserRepository userRepository;
-
-    @BeforeAll
-    static void init() {
-        context = new AnnotationConfigApplicationContext(ApplicationConfigurationTest.class);
-        userRepository = context.getBean("userRepository", UserRepository.class);
-    }
+    private final UserRepository userRepository;
 
     @Test
     void shouldCreateUser() {
@@ -116,7 +100,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         entityManager.persist(user2);
         entityManager.flush();
 
-        List<User> users = userRepository.findAllWithCriteriaApi(entityManager);
+        List<User> users = userRepository.findAllWithCriteriaApi();
 
         assertThat(users).hasSize(2);
         assertThat(users).containsAll(Arrays.asList(user1, user2));
@@ -137,7 +121,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         entityManager.persist(user3);
         entityManager.flush();
 
-        List<User> users = userRepository.findAllByFirstName(entityManager, targetFirstName);
+        List<User> users = userRepository.findAllByFirstName(targetFirstName);
 
         assertThat(users).isNotNull();
         assertThat(users).hasSize(1);
@@ -158,7 +142,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         EntityGraph<?> entityGraph = entityManager.getEntityGraph("withProfileAndCoursesTaughtAndProgressAndCertificate");
         entityManager.setProperty(GraphSemantic.FETCH.getJakartaHintName(), entityGraph);
 
-        userRepository.findAllByFirstName(entityManager, targetFirstName);
+        userRepository.findAllByFirstName(targetFirstName);
     }
 
     @Test
@@ -176,7 +160,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         entityManager.persist(user3);
         entityManager.flush();
 
-        List<User> users = userRepository.findAllByFirstNameWithCriteriaApi(entityManager, targetFirstName);
+        List<User> users = userRepository.findAllByFirstNameWithCriteriaApi(targetFirstName);
 
         assertThat(users).isNotNull();
         assertThat(users).hasSize(1);
@@ -208,7 +192,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         entityManager.persist(user);
         entityManager.flush();
 
-        Double averageGrade = userRepository.findAverageProgressGradeByFirstAndLastNames(entityManager, progressFilter);
+        Double averageGrade = userRepository.findAverageProgressGradeByFirstAndLastNames(progressFilter);
 
         assertThat(averageGrade).isCloseTo(55.0, within(0.001));
         assertThat(averageGrade).isBetween(54.0, 56.0);
@@ -239,7 +223,7 @@ class UserRepositoryIT extends RepositoryBaseIT {
         entityManager.persist(user);
         entityManager.flush();
 
-        Double averageGrade = userRepository.findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(entityManager, progressFilter);
+        Double averageGrade = userRepository.findAverageProgressGradeByFirstAndLastNamesWithCriteriaApi(progressFilter);
 
         assertThat(averageGrade).isCloseTo(55.0, within(0.001));
         assertThat(averageGrade).isBetween(54.0, 56.0);
