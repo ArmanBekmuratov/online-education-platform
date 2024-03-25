@@ -19,7 +19,7 @@ public class CriteriaPredicate {
 
 
     public static CriteriaPredicate builder(CriteriaBuilder cb) {
-        return  new CriteriaPredicate(cb);
+        return new CriteriaPredicate(cb);
     }
 
     public <T> CriteriaPredicate add(T object, Function<T, Predicate> function) {
@@ -30,7 +30,7 @@ public class CriteriaPredicate {
     }
 
     public <T> CriteriaPredicate add(Collection<T> collection, Function<Collection<T>, Predicate> function) {
-        if (collection!= null && !collection.isEmpty()) {
+        if (collection != null && !collection.isEmpty()) {
             predicates.add(function.apply(collection));
         }
         return this;

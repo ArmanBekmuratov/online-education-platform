@@ -1,14 +1,9 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Lesson;
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-@Repository
-public class LessonRepository extends RepositoryBase<Long, Lesson> {
 
-    public LessonRepository(EntityManager entityManager) {
-        super(Lesson.class, entityManager);
-    }
+public interface LessonRepository extends JpaRepository<Lesson, Long>, QuerydslPredicateExecutor<Lesson> {
 }

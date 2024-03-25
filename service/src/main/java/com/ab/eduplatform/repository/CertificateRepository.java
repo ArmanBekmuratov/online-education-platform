@@ -1,14 +1,9 @@
 package com.ab.eduplatform.repository;
 
 import com.ab.eduplatform.entity.Certificate;
-import jakarta.persistence.EntityManager;
-import org.hibernate.Session;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 
-@Repository
-public class CertificateRepository extends RepositoryBase<Long, Certificate> {
+public interface CertificateRepository extends JpaRepository<Certificate, Long>, QuerydslPredicateExecutor<Certificate> {
 
-    public CertificateRepository(EntityManager entityManager) {
-        super(Certificate.class, entityManager);
-    }
 }

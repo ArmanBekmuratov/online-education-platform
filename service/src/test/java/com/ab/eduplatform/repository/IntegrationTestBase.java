@@ -11,9 +11,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @IT
 public abstract class IntegrationTestBase {
 
+    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
+
     @Autowired
     protected EntityManager entityManager;
-    private static final PostgreSQLContainer<?> container = new PostgreSQLContainer<>("postgres:14.1");
 
     @BeforeAll
     static void runContainer() {
