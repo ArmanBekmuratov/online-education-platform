@@ -2,6 +2,7 @@ package com.ab.eduplatform.controller;
 
 import com.ab.eduplatform.dto.user.UserReadDto;
 import com.ab.eduplatform.entity.Role;
+import com.ab.eduplatform.http.controller.UserController;
 import com.ab.eduplatform.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

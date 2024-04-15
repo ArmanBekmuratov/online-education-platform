@@ -1,5 +1,12 @@
 package com.ab.eduplatform.entity;
 
-public enum Role {
-    ADMIN, STUDENT, TEACHER
+import org.springframework.security.core.GrantedAuthority;
+
+public enum Role implements GrantedAuthority {
+    ADMIN, STUDENT, TEACHER;
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
 }

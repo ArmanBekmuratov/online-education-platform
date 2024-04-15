@@ -2,28 +2,22 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Users</title>
+    <title>Login</title>
 </head>
 <body>
-<form action="/users">
-    <label for="firstname">Firstname:
-        <input id="firstname" type="text" name="firstname" th:value="${filter.firstname()}">
-    </label>
-    <label for="lastname">Lastname:
-        <input id="lastname" type="text" name="lastname" th:value="${filter.lastname()}">
-    </label>
-    <div>
-        <label for="page">Page:
-            <input id="page" type="number" name="page" th:value="${users.metadata.page}">
-        </label>
-        <label for="size">Size:
-            <input id="size" type="number" name="size" th:value="${users.metadata.size}">
-        </label>
+<form th:action="@{/login}" method="post">
+    <div style="color: red" th:if="${param.error}">
+        Bad credentials
     </div>
-    <button type="submit">Filter</button>
+    <label for="username">Email:
+        <input id="username" type="email" name="username">
+    </label><br>
+    <label for="password">Password:
+        <input id="password" type="password" name="password">
+    </label><br>
+    <button type="submit">Login</button>
 </form>
-<div th:each="user : ${users.content}">
-    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}|">User</a>
-</div>
+<form th:action="@{/registration}">
+    <button type="submit">Registration</button>
+</form>
 </body>
-</html>

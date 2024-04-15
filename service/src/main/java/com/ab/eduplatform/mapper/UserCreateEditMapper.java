@@ -3,13 +3,18 @@ package com.ab.eduplatform.mapper;
 import com.ab.eduplatform.dto.user.UserCreateEditDto;
 import com.ab.eduplatform.entity.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User map(UserCreateEditDto fromObject, User toObject) {
@@ -32,5 +37,9 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
         user.setPassword(object.getPassword());
         user.setRegistrationDate(Instant.now());
         user.setRole(object.getRole());
+        Optional.ofNullable(object.getPassword())
+                .filter(StringUtils::hasText)
+                .map(passwordEncoder::encode)
+                .ifPresent(user::setPassword);
     }
 }

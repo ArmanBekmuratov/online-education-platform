@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,10 +32,15 @@ public class CourseRestController {
 
     private final CourseService courseService;
 
-    @GetMapping(value = "/{id}/avatar", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public byte[] findAvatar(@PathVariable("id") Long id) {
+    @GetMapping(value = "/{id}/avatar")
+    public ResponseEntity<byte []> findAvatar(@PathVariable("id") Long id) {
         return courseService.findAvatar(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .map(content -> ResponseEntity.ok()
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE)
+                        .contentLength(content.length)
+                        .body(content))
+                .orElseGet(ResponseEntity.notFound()::build);
+
     }
 
     @GetMapping
@@ -56,18 +63,18 @@ public class CourseRestController {
         return courseService.create(course);
     }
 
-    @PutMapping("/{id}/")
+    @PutMapping("/{id}")
     public CourseReadDto update(@PathVariable("id") Long id,
                            @Validated @RequestBody CourseCreateEditDto course) {
         return courseService.update(id, course)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Long id) {
-        if (!courseService.delete(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        return courseService.delete(id)
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.notFound().build();
     }
 }
