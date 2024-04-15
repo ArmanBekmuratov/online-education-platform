@@ -1,12 +1,13 @@
 package com.ab.eduplatform.service;
 
-import com.ab.eduplatform.dto.UserCreateEditDto;
-import com.ab.eduplatform.dto.UserFilter;
-import com.ab.eduplatform.dto.UserReadDto;
+import com.ab.eduplatform.dto.user.UserCreateEditDto;
+import com.ab.eduplatform.dto.user.UserFilter;
+import com.ab.eduplatform.dto.user.UserReadDto;
 import com.ab.eduplatform.mapper.UserCreateEditMapper;
 import com.ab.eduplatform.mapper.UserReadMapper;
 import com.ab.eduplatform.repository.QPredicate;
 import com.ab.eduplatform.repository.UserRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +29,7 @@ public class UserService {
     private final UserCreateEditMapper userCreateEditMapper;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
-        var predicate = QPredicate.builder()
+        Predicate predicate = QPredicate.builder()
                 .add(filter.firstname(), user.firstname::containsIgnoreCase)
                 .add(filter.lastname(), user.lastname::containsIgnoreCase)
                 .buildAnd();

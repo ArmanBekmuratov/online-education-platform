@@ -1,8 +1,8 @@
 package com.ab.eduplatform.service;
 
-import com.ab.eduplatform.dto.UserCreateEditDto;
-import com.ab.eduplatform.dto.UserFilter;
-import com.ab.eduplatform.dto.UserReadDto;
+import com.ab.eduplatform.dto.user.UserCreateEditDto;
+import com.ab.eduplatform.dto.user.UserFilter;
+import com.ab.eduplatform.dto.user.UserReadDto;
 import com.ab.eduplatform.entity.Role;
 import com.ab.eduplatform.entity.User;
 import com.ab.eduplatform.mapper.UserCreateEditMapper;
@@ -128,7 +128,7 @@ class UserServiceIT {
     }
 
     private UserCreateEditDto getUserCreateEditDto() {
-        return new UserCreateEditDto("ivan@gmail.com", "ivan", "ivanko", Role.ADMIN, Instant.now());
+        return new UserCreateEditDto("ivan@gmail.com", "ivan", "ivanko", Role.ADMIN, "123" ,Instant.now());
     }
 
     private UserReadDto getUserReadDto() {

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${course.name}">Course Details</title>
+</head>
+<body>
+<h1 th:text="${course.name}">Course Name</h1>
+<p th:text="${course.description}">Course Description</p>
+<p>Start Date: <span th:text="${course.startDate}">01-01-2024</span></p>
+<p>End Date: <span th:text="${course.endDate}">01-12-2024</span></p>
+
+<div>
+    <h2>Lessons Included</h2>
+    <ul>
+        <li th:each="lesson : ${course.lessons}" th:text="${lesson.name}">Lesson Name</li>
+    </ul>
+</div>
+
+
+<div>
+    <a th:href="@{/courses}">Back to Courses</a>
+</div>
+
+</body>
+</html>

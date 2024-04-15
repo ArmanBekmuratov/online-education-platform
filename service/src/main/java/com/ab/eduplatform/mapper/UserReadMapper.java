@@ -1,6 +1,6 @@
 package com.ab.eduplatform.mapper;
 
-import com.ab.eduplatform.dto.UserReadDto;
+import com.ab.eduplatform.dto.user.UserReadDto;
 import com.ab.eduplatform.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

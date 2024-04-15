@@ -2,20 +2,28 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Users</title>
 </head>
 <body>
-<form action="/login" method="post">
-    <label for="email">Email:
-        <input id="email" type="text" name="email">
-    </label><br>
-    <label for="password">Password:
-        <input id="password" type="password" name="password">
-    </label><br>
-    <button type="submit">Login</button>
+<form action="/users">
+    <label for="firstname">Firstname:
+        <input id="firstname" type="text" name="firstname" th:value="${filter.firstname()}">
+    </label>
+    <label for="lastname">Lastname:
+        <input id="lastname" type="text" name="lastname" th:value="${filter.lastname()}">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${users.metadata.page}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${users.metadata.size}">
+        </label>
+    </div>
+    <button type="submit">Filter</button>
 </form>
-<form action="/users/registration">
-    <button type="submit">Registration</button>
-</form>
+<div th:each="user : ${users.content}">
+    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}|">User</a>
+</div>
 </body>
 </html>

@@ -1,8 +1,7 @@
 package com.ab.eduplatform.controller;
 
-import com.ab.eduplatform.dto.UserReadDto;
+import com.ab.eduplatform.dto.user.UserReadDto;
 import com.ab.eduplatform.entity.Role;
-import com.ab.eduplatform.http.controller.UserController;
 import com.ab.eduplatform.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-class UserControllerIT {
+class UserControllerTest {
 
     @Mock
     private UserService userService;

@@ -2,27 +2,28 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title>Users</title>
 </head>
 <body>
-<form th:action="@{/users}" method="post" th:object="${user}">
-    <label for="email">Email:
-        <input id="email" type="text" name="email" th:value="*{email}">
-    </label><br>
-    <label for="birthDate">BirthDate:
-        <input id="birthDate" type="date" name="birthDate" th:value="*{birthDate}">
-    </label><br>
-    <label for="lastname">Lastname:
-        <input id="lastname" type="text" name="lastname" th:value="*{lastname}">
-    </label><br>
+<form action="/users">
     <label for="firstname">Firstname:
-        <input id="firstname" type="text" name="firstname" th:value="*{firstname}">
-    </label><br>
-    <div th:each="role : ${roles}">
-        <input th:id="${role}" type="radio" name="role" th:value="${role}" th:checked="${role == user.role}">
-        <label th:for="${role}" th:text="${role}">Role name</label>
+        <input id="firstname" type="text" name="firstname" th:value="${filter.firstname()}">
+    </label>
+    <label for="lastname">Lastname:
+        <input id="lastname" type="text" name="lastname" th:value="${filter.lastname()}">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${users.metadata.page}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${users.metadata.size}">
+        </label>
     </div>
-    <button type="submit">Register</button>
+    <button type="submit">Filter</button>
 </form>
+<div th:each="user : ${users.content}">
+    <a th:href="@{'/users/' + ${user.id}}" th:text="|${user.id}. ${user.email}|">User</a>
+</div>
 </body>
 </html>

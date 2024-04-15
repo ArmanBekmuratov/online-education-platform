@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Courses</title>
+</head>
+<body>
+<h1>Available Courses</h1>
+
+<form action="/courses" enctype="multipart/form-data" method="post" th:object="${course}">
+    <label for="name">Course Name:
+        <input id="name" type="text" name="name" th:value="${filter.name}">
+    </label>
+    <label for="description">Description:
+        <input id="description" type="text" name="description" th:value="${filter.description}">
+    </label>
+    <div>
+        <img th:src="@{api/v1/courses/{courseId}/avatar(courseId=${course.id})}" alt="Course Image">
+    </div>
+    <label for="image">Image:
+        <input id="image" type="file" name="image">
+    </label>
+    <div>
+        <label for="page">Page:
+            <input id="page" type="number" name="page" th:value="${courses.number}">
+        </label>
+        <label for="size">Size:
+            <input id="size" type="number" name="size" th:value="${courses.size}">
+        </label>
+    </div>
+    <button type="submit">Filter</button>
+</form>
+
+<div id="courses">
+    <div th:each="course : ${courses.content}">
+        <h2 th:text="${course.name}">Course Name</h2>
+        <p th:text="${course.description}">Course Description</p>
+        <p>Price: <span th:text="${course.price}">100</span> USD</p>
+    </div>
+</div>
+
+</body>
+</html>
