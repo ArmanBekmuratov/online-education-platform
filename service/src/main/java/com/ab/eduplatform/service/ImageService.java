@@ -17,12 +17,9 @@ import static java.nio.file.StandardOpenOption.*;
 @RequiredArgsConstructor
 public class ImageService {
 
-    @Value("${app.image.bucket:/Users/dana/IdeaProjects/online-education-platform/images}")
-    private final String bucket;
-
     @SneakyThrows
     public void upload(String imagePath, InputStream content) {
-        Path fullImagePath = Path.of(bucket, imagePath);
+        Path fullImagePath = Path.of(imagePath);
 
         try (content)   {
             Files.createDirectories(fullImagePath.getParent());
@@ -32,7 +29,7 @@ public class ImageService {
 
     @SneakyThrows
     public Optional<byte []> get(String imagePath) {
-        Path fullImagePath = Path.of(bucket, imagePath);
+        Path fullImagePath = Path.of(imagePath);
 
         return Files.exists(fullImagePath)
                 ? Optional.of(Files.readAllBytes(fullImagePath))
